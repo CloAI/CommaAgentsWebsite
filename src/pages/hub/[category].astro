@@ -1,7 +1,14 @@
 ---
 import PageHeader from "@components/PageHeader/PageHeader.astro";
+import registry from "../../../hub_repo/registry.json";
 import Base from "@layouts/Base.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
+import type {
+  HubArtifactKind,
+  HubPackage,
+  HubRegistryArtifact,
+} from "@hub/hub.types";
+import { getArtifactUrl, getHubArtifacts } from "@hub/hub.utils";
 
 export async function getStaticPaths() {
   const categories = (await getCollection("hub")).filter(
@@ -10,21 +17,27 @@ export async function getStaticPaths() {
 
   return categories.map((entry) => ({
     params: { category: entry.data.name ?? entry.slug },
-    props: { entry },
+    props: {
+      entry,
+      artifacts: getHubArtifacts(
+        registry,
+        (entry.data.name ?? entry.slug) as HubArtifactKind,
+      ),
+    },
   }));
 }
 
 interface Props {
   entry: CollectionEntry<"hub">;
+  artifacts: ReadonlyArray<{
+    hubPackage: HubPackage;
+    artifact: HubRegistryArtifact;
+  }>;
 }
 
-const { entry } = Astro.props;
+const { entry, artifacts } = Astro.props as Props;
 const { title, excerpt } = entry.data;
-
-// TODO(hub): Replace this placeholder with the real module listing. The v1 site
-// globbed `/hub_repo/**/**/**/README.md`, grouped modules by agents/flows/
-// strategies, and paginated them. That submodule-driven listing is deferred
-// while the Hub is a work in progress.
+const category = (entry.data.name ?? entry.slug) as HubArtifactKind;
 ---
 
 <Base title={`${title} · Comma Agents Hub`} description={excerpt}>
@@ -38,26 +51,43 @@ const { title, excerpt } = entry.data;
 
   <section class="section">
     <div class="container">
-      <div class="hubPlaceholder">
-        <h2 class="h4">Listings coming soon</h2>
-        <p>
-          The {title.toLowerCase()} catalog is being wired up to the Comma Agents
-          Hub. Check back shortly, or browse the source on GitHub in the meantime.
-        </p>
-        <a
-          class="hubPlaceholderLink"
-          href="https://github.com/CloAI/CommaAgentsHub"
-          target="_blank"
-          rel="noopener noreferrer">View the Hub repository</a
-        >
-      </div>
+      {
+        artifacts.length > 0 ? (
+          <div class="artifactGrid">
+            {artifacts.map(({ hubPackage, artifact }) => (
+              <a
+                class="artifactCard"
+                href={getArtifactUrl(category, hubPackage.name, artifact.id)}
+              >
+                <div class="artifactHeading">
+                  <h2 class="h4">{artifact.id}</h2>
+                  <span class="version">v{hubPackage.version}</span>
+                </div>
+                <p>{artifact.description ?? hubPackage.description}</p>
+                <div class="artifactMeta">
+                  <span>{hubPackage.name}</span>
+                  <span>View details →</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="emptyState">
+            <h2 class="h4">No published {title.toLowerCase()}</h2>
+            <p>
+              Published Hub packages will appear here after the registry is
+              updated.
+            </p>
+          </div>
+        )
+      }
     </div>
   </section>
 </Base>
 
 <style lang="scss">
   @use "styles/tokens" as *;
-  @use "styles/mixins" as *;
+  @use "styles/breakpoints" as *;
 
   .breadcrumb {
     display: inline-flex;
@@ -74,29 +104,71 @@ const { title, excerpt } = entry.data;
     }
   }
 
-  .hubPlaceholder {
-    @include flex_column;
-    align-items: center;
+  .artifactGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing_lg;
+
+    @include breakpoint_md {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .artifactCard,
+  .emptyState {
+    display: flex;
+    flex-direction: column;
     gap: $spacing_md;
-    text-align: center;
-    padding: $spacing_3xl $spacing_xl;
+    padding: $spacing_xl;
     background-color: $color_surface;
-    border: 1px dashed $color_border;
+    border: 1px solid $color_border;
     border-radius: $radius_lg;
+  }
+
+  .artifactCard {
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover {
+      border-color: $color_border_strong;
+      background-color: $color_surface_alt;
+    }
+
+    .artifactHeading,
+    .artifactMeta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing_md;
+    }
+
+    .version {
+      padding: $spacing_xs $spacing_sm;
+      border-radius: $radius_full;
+      background-color: $color_accent_soft;
+      color: $color_accent;
+      font-size: 0.85rem;
+      font-weight: $font_weight_semibold;
+    }
+
+    .artifactMeta {
+      margin-top: auto;
+      color: $color_text_muted;
+      font-size: 0.9rem;
+    }
 
     p {
       color: $color_text_muted;
-      max-width: 520px;
     }
+  }
 
-    .hubPlaceholderLink {
-      @include button;
-      background-color: $color_accent;
-      color: $color_text;
+  .emptyState {
+    align-items: center;
+    text-align: center;
 
-      &:hover {
-        background-color: $color_accent_hover;
-      }
+    p {
+      color: $color_text_muted;
     }
   }
 </style>

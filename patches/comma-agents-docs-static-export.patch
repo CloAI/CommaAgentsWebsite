@@ -1,0 +1,98 @@
+diff --git a/docs/app/api/search/route.ts b/docs/app/api/search/route.ts
+index b02d7cd..c91c6f7 100644
+--- a/docs/app/api/search/route.ts
++++ b/docs/app/api/search/route.ts
+@@ -1,6 +1,9 @@
+ import { source } from '@/lib/source';
+ import { createFromSource } from 'fumadocs-core/search/server';
+ 
+-export const { GET } = createFromSource(source, {
++const search = createFromSource(source, {
+   language: 'english',
+ });
++
++export const dynamic = 'force-static';
++export const GET = search.staticGET;
+diff --git a/docs/app/layout.tsx b/docs/app/layout.tsx
+index 3ad7b1d..20c8de3 100644
+--- a/docs/app/layout.tsx
++++ b/docs/app/layout.tsx
+@@ -6,7 +6,16 @@ export default function Layout({ children }: { children: ReactNode }) {
+   return (
+     <html lang="en" suppressHydrationWarning>
+       <body className="flex flex-col min-h-screen">
+-        <RootProvider>{children}</RootProvider>
++        <RootProvider
++          search={{
++            options: {
++              type: 'static',
++              api: '/api/search',
++            },
++          }}
++        >
++          {children}
++        </RootProvider>
+       </body>
+     </html>
+   );
+diff --git a/docs/next.config.mjs b/docs/next.config.mjs
+index c15d53c..549c067 100644
+--- a/docs/next.config.mjs
++++ b/docs/next.config.mjs
+@@ -1,26 +1,40 @@
+ import { createMDX } from 'fumadocs-mdx/next';
+ 
+ const withMDX = createMDX();
++const isStaticExport = process.env.COMMA_DOCS_STATIC_EXPORT === 'true';
+ 
+ /** @type {import('next').NextConfig} */
+ const config = {
+   reactStrictMode: true,
+-  async redirects() {
+-    return [
+-      {
+-        source: '/install',
+-        destination:
+-          'https://raw.githubusercontent.com/CloAI/CommaAgents/main/packages/cli/install/install.sh',
+-        permanent: false,
+-      },
+-      {
+-        source: '/install.ps1',
+-        destination:
+-          'https://raw.githubusercontent.com/CloAI/CommaAgents/main/packages/cli/install/install.ps1',
+-        permanent: false,
+-      },
+-    ];
+-  },
++  ...(isStaticExport
++    ? {
++        output: 'export',
++        trailingSlash: true,
++        images: {
++          unoptimized: true,
++        },
++      }
++    : {}),
++  ...(!isStaticExport
++    ? {
++        async redirects() {
++          return [
++            {
++              source: '/install',
++              destination:
++                'https://raw.githubusercontent.com/CloAI/CommaAgents/main/packages/cli/install/install.sh',
++              permanent: false,
++            },
++            {
++              source: '/install.ps1',
++              destination:
++                'https://raw.githubusercontent.com/CloAI/CommaAgents/main/packages/cli/install/install.ps1',
++              permanent: false,
++            },
++          ];
++        },
++      }
++    : {}),
+ };
+ 
+ export default withMDX(config);

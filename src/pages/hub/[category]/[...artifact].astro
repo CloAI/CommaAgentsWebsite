@@ -1,0 +1,317 @@
+---
+import PageHeader from "@components/PageHeader/PageHeader.astro";
+import Base from "@layouts/Base.astro";
+import type {
+  HubArtifactKind,
+  HubPackage,
+  HubRegistryArtifact,
+} from "@hub/hub.types";
+import { getHubArtifacts } from "@hub/hub.utils";
+import registry from "../../../../hub_repo/registry.json";
+
+export function getStaticPaths() {
+  const artifactKinds: ReadonlyArray<HubArtifactKind> = [
+    "agents",
+    "strategies",
+    "flows",
+    "tools",
+  ];
+
+  return artifactKinds.flatMap((category) =>
+    getHubArtifacts(registry, category).map(({ hubPackage, artifact }) => ({
+      params: {
+        category,
+        artifact: `${hubPackage.name.slice(1)}/${artifact.id}`,
+      },
+      props: {
+        category,
+        hubPackage,
+        artifact,
+      },
+    })),
+  );
+}
+
+interface Props {
+  category: HubArtifactKind;
+  hubPackage: HubPackage;
+  artifact: HubRegistryArtifact;
+}
+
+const { category, hubPackage, artifact } = Astro.props as Props;
+const categoryTitles: Readonly<Record<HubArtifactKind, string>> = {
+  agents: "Agents",
+  strategies: "Strategies",
+  flows: "Flows",
+  tools: "Tools",
+};
+const artifactKindTitles: Readonly<Record<HubArtifactKind, string>> = {
+  agents: "Agent",
+  strategies: "Strategy",
+  flows: "Flow",
+  tools: "Tool",
+};
+const categoryTitle = categoryTitles[category];
+const repositoryUrl =
+  hubPackage.links?.repository ??
+  `https://github.com/CloAI/CommaAgentsHub/tree/main/${hubPackage.path}`;
+const sourceUrl = `https://github.com/CloAI/CommaAgentsHub/blob/main/${artifact.path}`;
+const permissions = Object.entries(hubPackage.permissions ?? {})
+  .filter(([, required]) => required)
+  .map(([permission]) => permission);
+const environment = Object.entries(hubPackage.environment ?? {});
+---
+
+<Base
+  title={`${artifact.id} · Comma Agents Hub`}
+  description={artifact.description ?? hubPackage.description}
+>
+  <PageHeader
+    title={artifact.id}
+    description={artifact.description ?? hubPackage.description}
+  >
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/hub">Hub</a>
+      <span>/</span>
+      <a href={`/hub/${category}`}>{categoryTitle}</a>
+      <span>/</span>
+      <span>{artifact.id}</span>
+    </nav>
+  </PageHeader>
+
+  <section class="section">
+    <div class="container detailLayout">
+      <article class="detailCard">
+        <div class="detailHeading">
+          <div>
+            <span class="eyebrow">{artifactKindTitles[category]}</span>
+            <h2 class="h3">{artifact.id}</h2>
+          </div>
+          <span class="version">v{hubPackage.version}</span>
+        </div>
+
+        <p class="description">
+          {
+            artifact.description ??
+              hubPackage.description ??
+              "No description provided."
+          }
+        </p>
+
+        <div>
+          <h3 class="h5">Reference</h3>
+          <code>{artifact.ref}</code>
+        </div>
+
+        {
+          environment.length > 0 && (
+            <div>
+              <h3 class="h5">Environment</h3>
+              <ul class="metadataList">
+                {environment.map(([name, variable]) => (
+                  <li>
+                    <code>{name}</code>
+                    <span>
+                      {variable.description ?? "Required configuration value."}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          permissions.length > 0 && (
+            <div>
+              <h3 class="h5">Permissions</h3>
+              <ul class="tagList">
+                {permissions.map((permission) => (
+                  <li>{permission}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </article>
+
+      <aside class="packageCard">
+        <span class="eyebrow">Package</span>
+        <h2 class="h4">{hubPackage.name}</h2>
+        <p>{hubPackage.description}</p>
+
+        <dl>
+          <div>
+            <dt>Version</dt>
+            <dd>{hubPackage.version}</dd>
+          </div>
+          {
+            hubPackage.author && (
+              <div>
+                <dt>Author</dt>
+                <dd>{hubPackage.author.name}</dd>
+              </div>
+            )
+          }
+          {
+            hubPackage.license && (
+              <div>
+                <dt>License</dt>
+                <dd>{hubPackage.license}</dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+          View artifact source
+        </a>
+        <a href={repositoryUrl} target="_blank" rel="noopener noreferrer">
+          View package repository
+        </a>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+  @use "styles/breakpoints" as *;
+
+  .breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing_sm;
+    padding: $spacing_xs $spacing_md;
+    border-radius: $radius_full;
+    background-color: $color_surface;
+    color: $color_text_muted;
+    font-size: 0.9rem;
+
+    a:hover {
+      color: $color_accent;
+    }
+  }
+
+  .detailLayout {
+    display: grid;
+    gap: $spacing_lg;
+
+    @include breakpoint_lg {
+      grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+      align-items: start;
+    }
+  }
+
+  .detailCard,
+  .packageCard {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+    padding: $spacing_xl;
+    background-color: $color_surface;
+    border: 1px solid $color_border;
+    border-radius: $radius_lg;
+  }
+
+  .detailHeading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $spacing_lg;
+  }
+
+  .eyebrow {
+    color: $color_accent;
+    font-size: 0.8rem;
+    font-weight: $font_weight_semibold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .version,
+  .tagList li {
+    padding: $spacing_xs $spacing_sm;
+    border-radius: $radius_full;
+    background-color: $color_accent_soft;
+    color: $color_accent;
+    font-size: 0.85rem;
+    font-weight: $font_weight_semibold;
+  }
+
+  .description,
+  .packageCard p,
+  .metadataList span {
+    color: $color_text_muted;
+  }
+
+  code {
+    display: inline-block;
+    margin-top: $spacing_sm;
+    padding: $spacing_sm $spacing_md;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    border-radius: $radius_sm;
+    background-color: $color_primary;
+    color: $color_text;
+  }
+
+  .metadataList {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_md;
+    margin-top: $spacing_md;
+
+    li {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_xs;
+    }
+
+    code {
+      align-self: flex-start;
+      margin-top: 0;
+    }
+  }
+
+  .tagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing_sm;
+    margin-top: $spacing_md;
+  }
+
+  .packageCard {
+    dl {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_sm;
+      margin: 0;
+
+      div {
+        display: flex;
+        justify-content: space-between;
+        gap: $spacing_md;
+      }
+
+      dt {
+        color: $color_text_muted;
+      }
+
+      dd {
+        margin: 0;
+      }
+    }
+
+    a {
+      color: $color_accent;
+      font-weight: $font_weight_semibold;
+
+      &:hover {
+        color: $color_accent_hover;
+      }
+    }
+  }
+</style>

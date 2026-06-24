@@ -12,6 +12,7 @@
       "@layouts/*": ["src/layouts/*"],
       "@config/*": ["src/config/*"],
       "@content/*": ["src/content/*"],
+      "@hub/*": ["src/hub/*"],
       "@utils/*": ["src/utils/*"]
     }
   },

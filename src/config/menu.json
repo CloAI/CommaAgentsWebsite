@@ -20,6 +20,10 @@
         {
           "name": "Flows",
           "url": "/hub/flows"
+        },
+        {
+          "name": "Tools",
+          "url": "/hub/tools"
         }
       ]
     },

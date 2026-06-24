@@ -5,7 +5,7 @@ banner:
   image: /images/big-logo.png
   button:
     label: Get Started
-    link: "/docs/getting_started/quick_start"
+    link: "/docs"
     enable: true
 code_example:
   title: ChatGPT Example

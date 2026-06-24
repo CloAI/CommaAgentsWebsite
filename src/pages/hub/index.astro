@@ -4,7 +4,7 @@ import PageHeader from "@components/PageHeader/PageHeader.astro";
 import Base from "@layouts/Base.astro";
 import { getCollection } from "astro:content";
 
-const categoryOrder = ["agents", "strategies", "flows"];
+const categoryOrder = ["agents", "strategies", "flows", "tools"];
 
 const hubEntries = await getCollection("hub");
 const intro = hubEntries.find((entry) => entry.slug === "-index");
