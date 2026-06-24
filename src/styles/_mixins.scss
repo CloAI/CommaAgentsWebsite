@@ -1,0 +1,54 @@
+@use "tokens" as *;
+
+@mixin flex_center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex_column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin truncate_text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Centered, max-width content wrapper with responsive horizontal padding.
+@mixin container {
+  width: 100%;
+  max-width: $container_max;
+  margin-inline: auto;
+  padding-inline: $spacing_md;
+
+  @include media_md {
+    padding-inline: $container_padding;
+  }
+}
+
+// Local re-export of the md breakpoint so `container` stays self-contained.
+@mixin media_md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+// Pill button used across the site (hero CTA, etc.).
+@mixin button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing_sm;
+  padding: $spacing_sm $spacing_lg;
+  border-radius: $radius_full;
+  font-weight: $font_weight_semibold;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}

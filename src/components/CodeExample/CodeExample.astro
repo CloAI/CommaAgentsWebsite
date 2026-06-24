@@ -1,0 +1,86 @@
+---
+import { Code } from "astro:components";
+
+interface CodeExampleData {
+  title: string;
+  description: string;
+  code: string;
+  code_output: string;
+}
+
+interface Props {
+  codeExample: CodeExampleData;
+}
+
+const { codeExample } = Astro.props;
+const { title, description, code, code_output } = codeExample;
+---
+
+<section class="codeExample section">
+  <div class="container">
+    <div class="codeExampleInner">
+      <div class="codeExampleIntro">
+        <h2>{title}</h2>
+        <p>{description}</p>
+        <div class="codeExampleOutput">
+          <Code code={code_output} lang="markdown" theme="one-dark-pro" />
+        </div>
+      </div>
+      <div class="codeExampleSnippet">
+        <Code code={code} lang="python" theme="one-dark-pro" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+  @use "styles/breakpoints" as *;
+
+  .codeExample {
+    .codeExampleInner {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_2xl;
+
+      @include breakpoint_lg {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .codeExampleIntro {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_md;
+
+      @include breakpoint_lg {
+        flex: 1;
+        order: 1;
+      }
+
+      p {
+        color: $color_text_muted;
+      }
+    }
+
+    .codeExampleSnippet {
+      @include breakpoint_lg {
+        flex: 1;
+        order: 2;
+      }
+    }
+
+    .codeExampleOutput,
+    .codeExampleSnippet :global(pre) {
+      border-radius: $radius_md;
+      padding: $spacing_md;
+      box-shadow: $shadow_md;
+      overflow-x: auto;
+    }
+
+    .codeExampleOutput :global(pre) {
+      background: transparent !important;
+    }
+  }
+</style>

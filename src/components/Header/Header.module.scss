@@ -1,0 +1,140 @@
+@use "styles/tokens" as *;
+@use "styles/breakpoints" as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: rgba($color_primary, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  &.sticky {
+    border-bottom-color: $color_border;
+    background-color: rgba($color_primary, 0.85);
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-block: $spacing_md;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing_sm;
+
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    span {
+      font-family: $font_secondary;
+      font-weight: $font_weight_bold;
+      font-size: $font_h5;
+      color: $color_text;
+    }
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: $color_text;
+
+    @include breakpoint_lg {
+      display: none;
+    }
+  }
+
+  .navMenu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: $spacing_xs;
+    margin-top: $spacing_md;
+
+    &.open {
+      display: flex;
+    }
+
+    @include breakpoint_lg {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: auto;
+      margin-top: 0;
+      gap: $spacing_sm;
+    }
+  }
+
+  .navItem {
+    position: relative;
+  }
+
+  .navLink {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing_xs;
+    padding: $spacing_sm $spacing_md;
+    border-radius: $radius_md;
+    color: $color_text;
+    font-weight: $font_weight_medium;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover,
+    &.active {
+      color: $color_accent;
+    }
+  }
+
+  .dropdownList {
+    display: none;
+    flex-direction: column;
+    gap: $spacing_xs;
+    padding-left: $spacing_md;
+
+    &.open {
+      display: flex;
+    }
+
+    @include breakpoint_lg {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 200px;
+      padding: $spacing_sm;
+      background-color: $color_surface;
+      border: 1px solid $color_border;
+      border-radius: $radius_md;
+      box-shadow: $shadow_md;
+
+      // Desktop: reveal on hover regardless of click state.
+      .dropdown:hover & {
+        display: flex;
+      }
+    }
+  }
+
+  .dropdownLink {
+    display: block;
+    padding: $spacing_sm $spacing_md;
+    border-radius: $radius_sm;
+    color: $color_text_muted;
+
+    &:hover,
+    &.active {
+      color: $color_text;
+      background-color: $color_surface_alt;
+    }
+  }
+}

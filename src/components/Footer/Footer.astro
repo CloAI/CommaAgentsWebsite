@@ -1,0 +1,128 @@
+---
+import Logo from "@components/Logo/Logo.astro";
+import config from "@config/config.json";
+import menu from "@config/menu.json";
+import social from "@config/social.json";
+import { markdownify } from "@utils/markdown";
+
+const { footer } = menu;
+const { copyright, footer_description } = config.params;
+
+const socialLinks = Object.entries(social).filter(([, url]) => url !== "");
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footerTop">
+      <div class="footerBrand">
+        <Logo />
+        <p class="footerDescription">{footer_description}</p>
+      </div>
+
+      <nav class="footerNav" aria-label="Footer">
+        <h2 class="footerHeading">Links</h2>
+        <ul>
+          {
+            footer.map((link) => (
+              <li>
+                <a href={link.url}>{link.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      {
+        socialLinks.length > 0 && (
+          <nav class="footerNav" aria-label="Social">
+            <h2 class="footerHeading">Social</h2>
+            <ul>
+              {socialLinks.map(([name, url]) => (
+                <li>
+                  <a href={url} target="_blank" rel="noopener noreferrer">
+                    {name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </div>
+
+    <div class="footerBottom">
+      <p set:html={markdownify(copyright)} />
+    </div>
+  </div>
+</footer>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+  @use "styles/breakpoints" as *;
+
+  .footer {
+    background-color: $color_primary;
+    padding-top: $spacing_3xl;
+    border-top: 1px solid $color_border;
+
+    .footerTop {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_2xl;
+      padding-bottom: $spacing_2xl;
+
+      @include breakpoint_md {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    .footerBrand {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_md;
+      max-width: 420px;
+
+      .footerDescription {
+        color: $color_text_muted;
+        font-size: 0.95rem;
+      }
+    }
+
+    .footerNav {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing_md;
+
+      .footerHeading {
+        font-size: $font_h6;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: $color_text_muted;
+      }
+
+      ul {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing_sm;
+      }
+
+      a {
+        color: $color_text;
+        text-transform: capitalize;
+
+        &:hover {
+          color: $color_accent;
+        }
+      }
+    }
+
+    .footerBottom {
+      border-top: 1px solid $color_border;
+      padding-block: $spacing_lg;
+      text-align: center;
+      color: $color_text_muted;
+      font-size: 0.9rem;
+    }
+  }
+</style>

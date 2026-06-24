@@ -1,0 +1,74 @@
+@use "styles/tokens" as *;
+@use "styles/mixins" as *;
+@use "styles/breakpoints" as *;
+
+.benefitsGrid {
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_md;
+    text-align: center;
+    max-width: 760px;
+    margin-inline: auto;
+
+    p {
+      color: $color_text_muted;
+    }
+  }
+
+  .grid {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+    margin-top: $spacing_3xl;
+
+    @include breakpoint_md {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_sm;
+    padding: $spacing_xl;
+    background-color: $color_surface;
+    border: 1px solid $color_border;
+    border-radius: $radius_lg;
+    // Calm, flat hover — just a quiet border lift, no transform/glow.
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover {
+      border-color: $color_border_strong;
+      background-color: $color_surface_alt;
+    }
+
+    @include breakpoint_md {
+      flex: 0 0 calc(50% - #{$spacing_lg} / 2);
+    }
+
+    @include breakpoint_lg {
+      flex: 0 0 calc(33.333% - #{$spacing_lg} * 2 / 3);
+    }
+
+    h3 {
+      margin-top: $spacing_xs;
+    }
+
+    p {
+      color: $color_text_muted;
+    }
+  }
+
+  .iconBackdrop {
+    @include flex_center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius_md;
+    color: $color_accent;
+    background-color: $color_accent_soft;
+  }
+}

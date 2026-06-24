@@ -1,0 +1,72 @@
+---
+import Footer from "@components/Footer/Footer.astro";
+import { Header } from "@components/Header";
+import config from "@config/config.json";
+import menu from "@config/menu.json";
+import { plainify } from "@utils/markdown";
+import "@styles/global.scss";
+
+interface Props {
+  title?: string;
+  meta_title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  canonical?: string;
+}
+
+const { title, meta_title, description, image, noindex, canonical } =
+  Astro.props;
+
+const { base_url } = config.site;
+const pageTitle = plainify(meta_title || title || config.site.title);
+const pageDescription = plainify(description || config.metadata.meta_description);
+const pageImage = `${base_url}${image || config.metadata.meta_image}`;
+const canonicalUrl = canonical || new URL(Astro.url.pathname, base_url).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="shortcut icon" href={config.site.favicon} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    <meta name="description" content={pageDescription} />
+    <meta name="author" content={config.metadata.meta_author} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={pageImage} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={pageImage} />
+  </head>
+  <body>
+    <Header
+      client:load
+      navigation={menu.main}
+      currentPath={Astro.url.pathname}
+    />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

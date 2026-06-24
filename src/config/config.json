@@ -1,0 +1,22 @@
+{
+  "site": {
+    "title": "Comma Agents",
+    "base_url": "https://commaagents.com",
+    "base_path": "/",
+    "trailing_slash": true,
+    "favicon": "/images/logo.png",
+    "logo": "/images/logo.png",
+    "logo_width": "48",
+    "logo_height": "48",
+    "logo_text": "Comma Agents"
+  },
+  "params": {
+    "footer_description": "CloAI is dedicated to advancing AI and AGI, with a mission to bridge the gap between people and cutting-edge technology. Our goal is to make artificial intelligence accessible and beneficial for everyone, fostering a future where technology enhances human potential.",
+    "copyright": "Copyright © 2024 CloAI"
+  },
+  "metadata": {
+    "meta_author": "CloAI",
+    "meta_image": "/images/logo.png",
+    "meta_description": "Comma Agents helps connect developers to AI agents that can help them with their projects."
+  }
+}

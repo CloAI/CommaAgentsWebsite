@@ -1,0 +1,102 @@
+---
+import PageHeader from "@components/PageHeader/PageHeader.astro";
+import Base from "@layouts/Base.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const categories = (await getCollection("hub")).filter(
+    (entry) => entry.slug !== "-index",
+  );
+
+  return categories.map((entry) => ({
+    params: { category: entry.data.name ?? entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"hub">;
+}
+
+const { entry } = Astro.props;
+const { title, excerpt } = entry.data;
+
+// TODO(hub): Replace this placeholder with the real module listing. The v1 site
+// globbed `/hub_repo/**/**/**/README.md`, grouped modules by agents/flows/
+// strategies, and paginated them. That submodule-driven listing is deferred
+// while the Hub is a work in progress.
+---
+
+<Base title={`${title} · Comma Agents Hub`} description={excerpt}>
+  <PageHeader title={title} description={excerpt}>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/hub">Hub</a>
+      <span>/</span>
+      <span>{title}</span>
+    </nav>
+  </PageHeader>
+
+  <section class="section">
+    <div class="container">
+      <div class="hubPlaceholder">
+        <h2 class="h4">Listings coming soon</h2>
+        <p>
+          The {title.toLowerCase()} catalog is being wired up to the Comma Agents
+          Hub. Check back shortly, or browse the source on GitHub in the meantime.
+        </p>
+        <a
+          class="hubPlaceholderLink"
+          href="https://github.com/CloAI/CommaAgentsHub"
+          target="_blank"
+          rel="noopener noreferrer">View the Hub repository</a
+        >
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+  @use "styles/mixins" as *;
+
+  .breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing_sm;
+    padding: $spacing_xs $spacing_md;
+    border-radius: $radius_full;
+    background-color: $color_surface;
+    color: $color_text_muted;
+    font-size: 0.9rem;
+
+    a:hover {
+      color: $color_accent;
+    }
+  }
+
+  .hubPlaceholder {
+    @include flex_column;
+    align-items: center;
+    gap: $spacing_md;
+    text-align: center;
+    padding: $spacing_3xl $spacing_xl;
+    background-color: $color_surface;
+    border: 1px dashed $color_border;
+    border-radius: $radius_lg;
+
+    p {
+      color: $color_text_muted;
+      max-width: 520px;
+    }
+
+    .hubPlaceholderLink {
+      @include button;
+      background-color: $color_accent;
+      color: $color_text;
+
+      &:hover {
+        background-color: $color_accent_hover;
+      }
+    }
+  }
+</style>

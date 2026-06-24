@@ -1,0 +1,49 @@
+{
+  "main": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "Hub",
+      "url": "/hub",
+      "hasChildren": true,
+      "children": [
+        {
+          "name": "Agents",
+          "url": "/hub/agents"
+        },
+        {
+          "name": "Strategies",
+          "url": "/hub/strategies"
+        },
+        {
+          "name": "Flows",
+          "url": "/hub/flows"
+        }
+      ]
+    },
+    {
+      "name": "Documentation",
+      "url": "/docs"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/CloAI/CommaAgents"
+    }
+  ],
+  "footer": [
+    {
+      "name": "Hub",
+      "url": "/hub"
+    },
+    {
+      "name": "Documentation",
+      "url": "/docs"
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com/CloAI/CommaAgents"
+    }
+  ]
+}

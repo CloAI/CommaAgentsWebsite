@@ -1,0 +1,6 @@
+[submodule "hub_repo"]
+	path = hub_repo
+	url = git@github.com:CloAI/CommaAgentsHub.git
+[submodule "comma_agents_repo"]
+	path = comma_agents_repo
+	url = git@github.com:CloAI/CommaAgents.git

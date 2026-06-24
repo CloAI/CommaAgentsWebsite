@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<section class="pageHeader">
+  <div class="container">
+    <div class="pageHeaderInner">
+      <h1>{title}</h1>
+      {description && <p>{description}</p>}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+
+  .pageHeader {
+    padding-block: $spacing_3xl $spacing_2xl;
+    background-color: $color_primary;
+
+    .pageHeaderInner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing_md;
+      text-align: center;
+      max-width: 720px;
+      margin-inline: auto;
+
+      p {
+        color: $color_text_muted;
+        font-size: 1.05rem;
+      }
+    }
+  }
+</style>

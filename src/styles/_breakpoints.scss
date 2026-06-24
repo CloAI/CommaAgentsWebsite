@@ -1,0 +1,26 @@
+// Mobile-first min-width breakpoint mixins.
+// Base styles (no mixin) target the smallest screens.
+
+@mixin breakpoint_sm {
+  @media (min-width: 375px) {
+    @content;
+  }
+}
+
+@mixin breakpoint_md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin breakpoint_lg {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin breakpoint_xl {
+  @media (min-width: 1920px) {
+    @content;
+  }
+}

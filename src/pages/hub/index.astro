@@ -1,0 +1,69 @@
+---
+import { HubCategoryCard } from "@components/HubCategoryCard";
+import PageHeader from "@components/PageHeader/PageHeader.astro";
+import Base from "@layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const categoryOrder = ["agents", "strategies", "flows"];
+
+const hubEntries = await getCollection("hub");
+const intro = hubEntries.find((entry) => entry.slug === "-index");
+const categories = hubEntries
+  .filter((entry) => entry.slug !== "-index")
+  .sort(
+    (first, second) =>
+      categoryOrder.indexOf(first.slug) - categoryOrder.indexOf(second.slug),
+  );
+
+const Intro = intro ? (await intro.render()).Content : null;
+---
+
+<Base title="Comma Agents Hub" description={intro?.data.title}>
+  <PageHeader title={intro?.data.page_title ?? "Comma Agents Hub"}>
+    {Intro && <Intro />}
+  </PageHeader>
+
+  <section class="section">
+    <div class="container">
+      <div class="hubGrid">
+        {
+          categories.map((category) => (
+            <HubCategoryCard
+              title={category.data.title}
+              excerpt={category.data.excerpt ?? ""}
+              icon={category.data.icon ?? "box"}
+              color={category.data.color ?? "#1E90FF"}
+              url={`/hub/${category.data.name ?? category.slug}`}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+  @use "styles/breakpoints" as *;
+
+  .hubGrid {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_lg;
+
+    @include breakpoint_md {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    :global(.hubCategoryCard) {
+      @include breakpoint_md {
+        flex: 0 0 calc(50% - #{$spacing_lg} / 2);
+      }
+
+      @include breakpoint_lg {
+        flex: 1;
+      }
+    }
+  }
+</style>

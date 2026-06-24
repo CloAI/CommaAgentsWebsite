@@ -1,0 +1,85 @@
+@use "tokens" as *;
+@use "mixins" as *;
+@use "breakpoints" as *;
+@use "typography";
+
+// Box-sizing reset.
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+// Selection picks up the brand accent.
+::selection {
+  background: $color_accent_soft_hover;
+  color: $color_text;
+}
+
+// Keyboard focus is always visible; pointer focus stays quiet.
+:focus-visible {
+  outline: none;
+  box-shadow: $focus_ring;
+  border-radius: $radius_sm;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Shared layout primitives available to every page/component.
+.container {
+  @include container;
+}
+
+// Generous vertical rhythm — whitespace is doing the design work here.
+.section {
+  padding-block: $spacing_3xl;
+
+  @include breakpoint_lg {
+    padding-block: 96px;
+  }
+}

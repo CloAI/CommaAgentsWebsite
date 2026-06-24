@@ -1,0 +1,50 @@
+@use "styles/tokens" as *;
+@use "styles/mixins" as *;
+
+.hubCategoryCard {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing_sm;
+  padding: $spacing_xl;
+  height: 100%;
+  background-color: $color_surface;
+  border: 1px solid $color_border;
+  border-radius: $radius_lg;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    border-color: $color_border_strong;
+    background-color: $color_surface_alt;
+
+    .cta {
+      gap: $spacing_sm;
+    }
+  }
+
+  p {
+    color: $color_text_muted;
+    flex: 1;
+  }
+
+  .iconBackdrop {
+    @include flex_center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius_md;
+    margin-bottom: $spacing_xs;
+    color: $color_accent;
+    background-color: $color_accent_soft;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing_xs;
+    margin-top: $spacing_sm;
+    font-weight: $font_weight_semibold;
+    color: $color_accent;
+    transition: gap 0.2s ease;
+  }
+}

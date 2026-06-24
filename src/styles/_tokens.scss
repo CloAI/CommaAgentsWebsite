@@ -1,0 +1,102 @@
+@use "sass:math";
+
+// ---------------------------------------------------------------------------
+// Colors — clean, minimal dark theme on a cool neutral slate, anchored by a
+// single restrained indigo accent. Surfaces are layered with low contrast so
+// the UI stays calm; the accent is used sparingly for emphasis.
+// ---------------------------------------------------------------------------
+// Brand / chrome surfaces (header, footer, page headers) sit just below the
+// body so they separate without a hard line.
+$color_primary: #0a0b0f;
+$color_primary_hover: #14161c;
+$color_secondary: #2a2d36;
+$color_secondary_hover: #3a3e4a;
+
+// Layered content surfaces.
+$color_body: #0e0f13;
+$color_surface: #16171d;
+$color_surface_alt: #1e2027;
+
+// Foreground + lines.
+$color_text: #f4f5f8;
+$color_text_muted: #9aa1ad;
+$color_border: #23252e;
+$color_border_strong: #30333d;
+$color_border_light: #ebebeb;
+
+// Indigo / electric accent.
+$color_accent: #6366f1;
+$color_accent_hover: #4f46e5;
+// Soft accent washes for tinted backdrops/focus rings.
+$color_accent_soft: rgba(99, 102, 241, 0.12);
+$color_accent_soft_hover: rgba(99, 102, 241, 0.2);
+
+// Card accent palette — kept available, but the minimal theme renders icons in
+// a single accent tone for cohesion (see BenefitsGrid / HubCategoryCard).
+$color_accents: (
+  blue: #1e90ff,
+  green: #32cd32,
+  orange: #ffa500,
+  gold: #ffd700,
+  violet: #8a2be2,
+  teal: #20b2aa,
+);
+
+// ---------------------------------------------------------------------------
+// Spacing scale
+// ---------------------------------------------------------------------------
+$spacing_xs: 4px;
+$spacing_sm: 8px;
+$spacing_md: 16px;
+$spacing_lg: 24px;
+$spacing_xl: 32px;
+$spacing_2xl: 48px;
+$spacing_3xl: 72px;
+
+// ---------------------------------------------------------------------------
+// Radius & shadows
+// ---------------------------------------------------------------------------
+$radius_sm: 6px;
+$radius_md: 10px;
+$radius_lg: 14px;
+$radius_full: 9999px;
+
+// Restrained, soft shadows — the minimal theme leans on borders over depth.
+$shadow_sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+$shadow_md: 0 8px 24px rgba(0, 0, 0, 0.3);
+$shadow_lg: 0 24px 64px rgba(0, 0, 0, 0.45);
+
+// Accessible focus ring built from the accent.
+$focus_ring: 0 0 0 3px $color_accent_soft;
+
+// ---------------------------------------------------------------------------
+// Layout / container
+// ---------------------------------------------------------------------------
+$container_max: 1200px;
+$container_padding: $spacing_xl;
+
+// ---------------------------------------------------------------------------
+// Typography
+// ---------------------------------------------------------------------------
+$font_primary: "Inter", sans-serif;
+$font_secondary: "Inter", sans-serif;
+
+$font_weight_normal: 400;
+$font_weight_medium: 500;
+$font_weight_semibold: 600;
+$font_weight_bold: 700;
+$font_weight_black: 900;
+
+$font_base: 16px;
+$font_scale: 1.24571;
+
+// Modular type scale (mirrors the v1 tailwind.config math).
+$font_h6: 1rem;
+$font_h5: $font_h6 * $font_scale;
+$font_h4: $font_h5 * $font_scale;
+$font_h3: $font_h4 * $font_scale;
+$font_h2: $font_h3 * $font_scale;
+$font_h1: $font_h2 * $font_scale;
+
+$line_height_tight: 1.2;
+$line_height_base: 1.65;
