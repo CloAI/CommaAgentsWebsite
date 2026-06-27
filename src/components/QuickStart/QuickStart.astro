@@ -1,0 +1,402 @@
+---
+import { Code } from "astro:components";
+import type { CollectionEntry } from "astro:content";
+
+type QuickStartData = CollectionEntry<"homepage">["data"]["quick_start"];
+
+interface Props {
+  readonly quickStart: QuickStartData;
+}
+
+const { quickStart } = Astro.props;
+const { install, strategy } = quickStart;
+---
+
+<section class="quickStart section" id="quick-start">
+  <div class="container">
+    <header class="sectionHeader">
+      <p class="sectionLabel">Quick start</p>
+      <h2>{quickStart.title}</h2>
+      <p>{quickStart.description}</p>
+    </header>
+
+    <div class="steps">
+      <article class="step">
+        <div class="stepIntro">
+          <p class="stepLabel">{install.label}</p>
+          <h3>{install.title}</h3>
+          <p>{install.description}</p>
+          <p class="stepNote">{install.note}</p>
+        </div>
+
+        <div class="codeCard" data-tab-group="install">
+          <div class="codeToolbar" role="tablist" aria-label="Install platform">
+            <button
+              class="tabButton"
+              id="install-unix-tab"
+              type="button"
+              role="tab"
+              aria-controls="install-unix-panel"
+              aria-selected="true"
+              data-tab="unix"
+            >
+              {install.macos_linux.label}
+            </button>
+            <button
+              class="tabButton"
+              id="install-windows-tab"
+              type="button"
+              role="tab"
+              aria-controls="install-windows-panel"
+              aria-selected="false"
+              tabindex="-1"
+              data-tab="windows"
+            >
+              {install.windows.label}
+            </button>
+          </div>
+
+          <div
+            class="tabPanel"
+            id="install-unix-panel"
+            role="tabpanel"
+            aria-labelledby="install-unix-tab"
+            data-tab-panel="unix"
+          >
+            <Code
+              code={install.macos_linux.command}
+              lang="bash"
+              theme="one-dark-pro"
+            />
+          </div>
+          <div
+            class="tabPanel"
+            id="install-windows-panel"
+            role="tabpanel"
+            aria-labelledby="install-windows-tab"
+            data-tab-panel="windows"
+            hidden
+          >
+            <Code
+              code={install.windows.command}
+              lang="powershell"
+              theme="one-dark-pro"
+            />
+          </div>
+        </div>
+      </article>
+
+      <article class="step">
+        <div class="stepIntro">
+          <p class="stepLabel">{strategy.label}</p>
+          <h3>{strategy.title}</h3>
+          <p>{strategy.description}</p>
+          <a class="docsLink" href="/docs/core/strategy/">
+            Read the strategy guide <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+
+        <div class="codeCard" data-tab-group="strategy">
+          <div class="codeToolbar" role="tablist" aria-label="Strategy format">
+            <button
+              class="tabButton"
+              id="strategy-typescript-tab"
+              type="button"
+              role="tab"
+              aria-controls="strategy-typescript-panel"
+              aria-selected="true"
+              data-tab="typescript"
+            >
+              {strategy.typescript.label}
+            </button>
+            <button
+              class="tabButton"
+              id="strategy-json-tab"
+              type="button"
+              role="tab"
+              aria-controls="strategy-json-panel"
+              aria-selected="false"
+              tabindex="-1"
+              data-tab="json"
+            >
+              {strategy.json.label}
+            </button>
+          </div>
+
+          <div
+            class="tabPanel"
+            id="strategy-typescript-panel"
+            role="tabpanel"
+            aria-labelledby="strategy-typescript-tab"
+            data-tab-panel="typescript"
+          >
+            <div class="fileLabel">{strategy.typescript.filename}</div>
+            <Code
+              code={strategy.typescript.code}
+              lang="ts"
+              theme="one-dark-pro"
+            />
+            <div class="runCommand">
+              <span>Install and run</span>
+              <code>{strategy.typescript.command}</code>
+            </div>
+          </div>
+          <div
+            class="tabPanel"
+            id="strategy-json-panel"
+            role="tabpanel"
+            aria-labelledby="strategy-json-tab"
+            data-tab-panel="json"
+            hidden
+          >
+            <div class="fileLabel">{strategy.json.filename}</div>
+            <Code code={strategy.json.code} lang="json" theme="one-dark-pro" />
+            <div class="runCommand">
+              <span>Open in CommaAgents</span>
+              <code>{strategy.json.command}</code>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabGroups = document.querySelectorAll<HTMLElement>("[data-tab-group]");
+
+  for (const tabGroup of tabGroups) {
+    const tabButtons = Array.from(
+      tabGroup.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
+    );
+    const tabPanels = Array.from(
+      tabGroup.querySelectorAll<HTMLElement>('[role="tabpanel"]'),
+    );
+
+    function selectTab(selectedButton: HTMLButtonElement): void {
+      for (const tabButton of tabButtons) {
+        const isSelected = tabButton === selectedButton;
+        tabButton.setAttribute("aria-selected", String(isSelected));
+        tabButton.tabIndex = isSelected ? 0 : -1;
+      }
+
+      for (const tabPanel of tabPanels) {
+        tabPanel.hidden =
+          tabPanel.dataset.tabPanel !== selectedButton.dataset.tab;
+      }
+    }
+
+    for (const [buttonIndex, tabButton] of tabButtons.entries()) {
+      tabButton.addEventListener("click", () => selectTab(tabButton));
+      tabButton.addEventListener("keydown", (keyboardEvent) => {
+        let nextIndex = buttonIndex;
+
+        if (keyboardEvent.key === "ArrowRight") {
+          nextIndex = (buttonIndex + 1) % tabButtons.length;
+        } else if (keyboardEvent.key === "ArrowLeft") {
+          nextIndex = (buttonIndex - 1 + tabButtons.length) % tabButtons.length;
+        } else if (keyboardEvent.key === "Home") {
+          nextIndex = 0;
+        } else if (keyboardEvent.key === "End") {
+          nextIndex = tabButtons.length - 1;
+        } else {
+          return;
+        }
+
+        keyboardEvent.preventDefault();
+        const nextButton = tabButtons[nextIndex];
+        if (nextButton) {
+          selectTab(nextButton);
+          nextButton.focus();
+        }
+      });
+    }
+  }
+</script>
+
+<style lang="scss">
+  @use "styles/tokens" as *;
+  @use "styles/breakpoints" as *;
+
+  .quickStart {
+    background: $color_surface;
+    border-block: 1px solid $color_border;
+  }
+
+  .sectionHeader {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_md;
+    max-width: 760px;
+    margin-bottom: $spacing_2xl;
+
+    h2,
+    p {
+      margin: 0;
+    }
+
+    > p:last-child {
+      color: $color_text_muted;
+      font-size: 1.075rem;
+    }
+  }
+
+  .sectionLabel,
+  .stepLabel {
+    color: $color_accent;
+    font-size: 0.75rem;
+    font-weight: $font_weight_bold;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_3xl;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_xl;
+
+    @include breakpoint_lg {
+      display: grid;
+      grid-template-columns: minmax(240px, 0.65fr) minmax(0, 1.35fr);
+      align-items: start;
+      gap: $spacing_2xl;
+    }
+  }
+
+  .stepIntro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing_md;
+
+    h3,
+    p {
+      margin: 0;
+    }
+
+    > p:not(.stepLabel, .stepNote) {
+      color: $color_text_muted;
+    }
+  }
+
+  .stepNote {
+    padding-left: $spacing_md;
+    color: $color_text_muted;
+    font-size: 0.875rem;
+    border-left: 2px solid $color_accent;
+  }
+
+  .docsLink {
+    color: $color_text;
+    font-size: 0.875rem;
+    font-weight: $font_weight_semibold;
+    text-decoration: none;
+
+    &:hover {
+      color: $color_accent;
+    }
+  }
+
+  .codeCard {
+    min-width: 0;
+    overflow: hidden;
+    background: $color_primary;
+    border: 1px solid $color_border_strong;
+    border-radius: $radius_lg;
+    box-shadow: $shadow_md;
+  }
+
+  .codeToolbar {
+    display: flex;
+    gap: $spacing_xs;
+    padding: $spacing_sm;
+    overflow-x: auto;
+    background: $color_surface_alt;
+    border-bottom: 1px solid $color_border_strong;
+  }
+
+  .tabButton {
+    flex: 0 0 auto;
+    padding: $spacing_sm $spacing_md;
+    color: $color_text_muted;
+    font-size: 0.8125rem;
+    font-weight: $font_weight_semibold;
+    border-radius: $radius_sm;
+    cursor: pointer;
+    transition:
+      color 160ms ease,
+      background-color 160ms ease;
+
+    &:hover {
+      color: $color_text;
+      background: $color_secondary;
+    }
+
+    &[aria-selected="true"] {
+      color: $color_text;
+      background: $color_accent_soft_hover;
+    }
+  }
+
+  .tabPanel {
+    min-width: 0;
+
+    &[hidden] {
+      display: none;
+    }
+
+    :global(pre) {
+      min-height: 100%;
+      margin: 0;
+      padding: $spacing_lg;
+      overflow-x: auto;
+      border-radius: 0;
+    }
+  }
+
+  .fileLabel {
+    padding: $spacing_sm $spacing_lg;
+    color: $color_text_muted;
+    font-family: monospace;
+    font-size: 0.75rem;
+    background: $color_primary_hover;
+    border-bottom: 1px solid $color_border;
+  }
+
+  .runCommand {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing_sm;
+    padding: $spacing_md $spacing_lg;
+    background: $color_primary_hover;
+    border-top: 1px solid $color_border;
+
+    @include breakpoint_md {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: $spacing_lg;
+    }
+
+    span {
+      color: $color_text_muted;
+      font-size: 0.75rem;
+      font-weight: $font_weight_semibold;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    code {
+      color: $color_text;
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+  }
+</style>

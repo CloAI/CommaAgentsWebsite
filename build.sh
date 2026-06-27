@@ -21,6 +21,7 @@ git submodule update --init --recursive
 test -f hub_repo/registry.json
 
 npm run build:site
+cmp public/_redirects dist/_redirects
 
 if ! grep -q "COMMA_DOCS_STATIC_EXPORT" comma_agents_repo/docs/next.config.mjs; then
   git -C comma_agents_repo apply "$docs_patch"

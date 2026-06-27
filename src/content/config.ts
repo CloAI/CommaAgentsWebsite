@@ -13,11 +13,40 @@ const homepageCollection = defineCollection({
         enable: z.boolean().default(true),
       }),
     }),
-    code_example: z.object({
+    quick_start: z.object({
       title: z.string(),
       description: z.string(),
-      code: z.string(),
-      code_output: z.string(),
+      install: z.object({
+        label: z.string(),
+        title: z.string(),
+        description: z.string(),
+        note: z.string(),
+        macos_linux: z.object({
+          label: z.string(),
+          command: z.string(),
+        }),
+        windows: z.object({
+          label: z.string(),
+          command: z.string(),
+        }),
+      }),
+      strategy: z.object({
+        label: z.string(),
+        title: z.string(),
+        description: z.string(),
+        typescript: z.object({
+          label: z.string(),
+          filename: z.string(),
+          code: z.string(),
+          command: z.string(),
+        }),
+        json: z.object({
+          label: z.string(),
+          filename: z.string(),
+          code: z.string(),
+          command: z.string(),
+        }),
+      }),
     }),
     benefits: z.object({
       title: z.string(),

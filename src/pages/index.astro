@@ -1,16 +1,16 @@
 ---
 import Banner from "@components/Banner/Banner.astro";
 import { BenefitsGrid } from "@components/BenefitsGrid";
-import CodeExample from "@components/CodeExample/CodeExample.astro";
+import QuickStart from "@components/QuickStart/QuickStart.astro";
 import Base from "@layouts/Base.astro";
 import { getEntry } from "astro:content";
 
 const homepage = await getEntry("homepage", "index");
-const { banner, code_example, benefits } = homepage.data;
+const { banner, quick_start, benefits } = homepage.data;
 ---
 
 <Base>
   <Banner banner={banner} />
-  <CodeExample codeExample={code_example} />
+  <QuickStart quickStart={quick_start} />
   <BenefitsGrid benefits={benefits} />
 </Base>
